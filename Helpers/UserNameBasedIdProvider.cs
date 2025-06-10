@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.SignalR;
 
+namespace Colards.Helpers;
+
 public class UserNameBasedIdProvider : IUserIdProvider
 {
     public virtual string? GetUserId(HubConnectionContext connection)

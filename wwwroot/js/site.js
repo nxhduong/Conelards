@@ -1,7 +1,7 @@
 ﻿const connection = new signalR.HubConnectionBuilder()
     .withUrl("/Dealer")
     .configureLogging(signalR.LogLevel.Trace)
-    .withAutomaticReconnect([0, 10, 30, 60, 90, 150])
+    .withAutomaticReconnect([0, 10, 30, 60, 90, 120, 180])
     .build();
 
 connection

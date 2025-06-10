@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 
+namespace Colards.Database;
+
 public class AccountContext : DbContext
 {
     public DbSet<AccountModel> Users { get; set; }

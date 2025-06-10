@@ -1,6 +1,6 @@
 namespace Colards
 {
-    public class AuthCookie
+    public readonly struct AuthCookie
     {
         public const string Name = "ColardsAuthCookie";
     }

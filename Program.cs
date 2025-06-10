@@ -1,4 +1,5 @@
 using Colards;
+using Colards.Helpers;
 using Colards.Hubs;
 using Microsoft.AspNetCore.SignalR;
 
@@ -14,8 +15,8 @@ builder.Services
             (options) =>
             {
                 options.Cookie.Name = AuthCookie.Name;
-                options.LoginPath = "";
-                options.AccessDeniedPath = "/NotAuthorized";
+                options.LoginPath = "/SignIn";
+                options.AccessDeniedPath = "/Error";
                 options.ExpireTimeSpan = TimeSpan.FromDays(30);
             }
         );
@@ -42,6 +43,6 @@ app
     .UseAuthorization();
 
 app.MapRazorPages();
-app.MapHub<DealerHub>("/Dealer");
+app.MapHub<GameHub>("/Dealer");
 
 app.Run();

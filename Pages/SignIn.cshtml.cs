@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Colards;
+using Colards.Database;
+using Colards.Helpers;
 
 namespace Colards.Pages;
 
@@ -13,7 +15,7 @@ public class SignInModel : PageModel
     private readonly ILogger<SignInModel> _logger;
 
     [BindProperty]
-    public Credential SubmittedCredential { get; set; }
+    public CredentialForm SubmittedCredential { get; set; }
 
     public SignInModel(ILogger<SignInModel> logger)
     {
@@ -27,9 +29,9 @@ public class SignInModel : PageModel
         using var db = new AccountContext();
 
         if (SubmittedCredential.Action != "Sign up"
-            && !db.Users.Any(cred =>
-                cred.Username == SubmittedCredential.Username
-                && cred.HashPassword == TextHasher.Hash(SubmittedCredential.Password)
+            && !db.Users.Any(acc =>
+                acc.Username == SubmittedCredential.Username
+                && acc.HashPassword == SHA256TextHasher.Hash(SubmittedCredential.Password)
             )
         )
         {
@@ -37,12 +39,13 @@ public class SignInModel : PageModel
             return;
         }
 
-        if (SubmittedCredential.Action == "Sign up" && !db.Users.Any(cred => cred.Username == SubmittedCredential.Username))
+        if (SubmittedCredential.Action == "Sign up"
+            && !db.Users.Any(cred => cred.Username == SubmittedCredential.Username))
         {
             db.Add(new AccountModel
             {
                 Username = SubmittedCredential.Username,
-                HashPassword = TextHasher.Hash(SubmittedCredential.Password)
+                HashPassword = SHA256TextHasher.Hash(SubmittedCredential.Password)
             });
 
             await db.SaveChangesAsync();
@@ -61,7 +64,7 @@ public class SignInModel : PageModel
     }
 }
 
-public class Credential
+public class CredentialForm
 {
     [Required]
     [Length(5, 25)]
