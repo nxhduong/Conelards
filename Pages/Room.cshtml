@@ -1,0 +1,15 @@
+@page
+
+@if (User.Identity?.IsAuthenticated ?? false)
+{
+    //
+}
+else
+{
+    <h1>Please sign in to continue</h1>
+}
+
+@section Scripts{
+    <script src="~/js/signalr/signalr.js"></script>
+    <script src="~/site.js"></script>
+}

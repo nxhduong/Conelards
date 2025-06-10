@@ -1,0 +1,27 @@
+﻿@page
+@model SignInModel
+@{
+    ViewData["Title"] = "Colards - Login or Sign up";
+}
+
+@if (User.Identity?.IsAuthenticated ?? false)
+{
+    <h2>Welcome, @User.Identity.Name</h2>
+    <a href="/SignOut">Log out</a>
+}
+else
+{
+    <h2>Welcome, Guest! Please sign in or sign up to continue...</h2>
+    <form method="POST">
+        <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+        <span class="text-danger" asp-for="Cred.Username"></span>
+        <input type="text" asp-for="SubmittedCredential.Username" placeholder="Username" />
+        <br />
+        <span class="text-danger" asp-for="Cred.Password"></span>
+        <input type="password" asp-for="SubmittedCredential.Password" placeholder="Password" />
+        <br />
+        <input type="radio" name="method" asp-for="SubmittedCredential.Action" value="Sign in" checked/>
+        <input type="radio" name="method" asp-for="SubmittedCredential.Action" value="Sign up" />
+        <input type="submit" value="Let's go" />
+    </form>
+}

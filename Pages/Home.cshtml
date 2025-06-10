@@ -1,0 +1,32 @@
+@page
+@model HomeModel
+
+@{
+    ViewData["Title"] = "Colards";
+}
+
+@if (User.Identity?.IsAuthenticated ?? false)
+{
+    <h2>Welcome, @User.Identity.Name</h2>
+    <a href="/Logout">Log out</a>
+    <table>
+        <tr>
+            <td>
+                <h3>(Not implemented yet) New room...</h3>
+                <button>Create</button>
+            </td>
+            <td>
+                <h3>Or join an existing room</h3>
+                <form action="/Room" method="POST">
+                <input type="text" placeholder="Room code" />
+                <input type="submit" name="Join" />
+                </form>
+            </td>
+        </tr>
+    </table>
+}
+else
+{
+    <h2>Sign in to join the fun!</h2>
+    <a href="/Login">Log in</a>
+}
