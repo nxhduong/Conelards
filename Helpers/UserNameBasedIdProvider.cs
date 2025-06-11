@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Colards.Helpers;
+namespace Conelards.Helpers;
 
 public class UserNameBasedIdProvider : IUserIdProvider
 {

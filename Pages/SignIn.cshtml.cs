@@ -4,20 +4,20 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Colards;
-using Colards.Database;
-using Colards.Helpers;
+using Conelards;
+using Conelards.Database;
+using Conelards.Helpers;
 
-namespace Colards.Pages;
+namespace Conelards.Pages;
 
-public class SignInModel : PageModel
+public class SignInPageModel : PageModel
 {
-    private readonly ILogger<SignInModel> _logger;
+    private readonly ILogger<SignInPageModel> _logger;
 
     [BindProperty]
-    public CredentialForm SubmittedCredential { get; set; }
+    public SignInForm SubmittedCredential { get; set; }
 
-    public SignInModel(ILogger<SignInModel> logger)
+    public SignInPageModel(ILogger<SignInPageModel> logger)
     {
         _logger = logger;
     }
@@ -26,7 +26,7 @@ public class SignInModel : PageModel
     {
         if (!ModelState.IsValid) return;
 
-        using var db = new AccountContext();
+        using var db = new AccountDbContext();
 
         if (SubmittedCredential.Action != "Sign up"
             && !db.Users.Any(acc =>
@@ -42,7 +42,7 @@ public class SignInModel : PageModel
         if (SubmittedCredential.Action == "Sign up"
             && !db.Users.Any(cred => cred.Username == SubmittedCredential.Username))
         {
-            db.Add(new AccountModel
+            db.Add(new AccountDbModel
             {
                 Username = SubmittedCredential.Username,
                 HashPassword = SHA256TextHasher.Hash(SubmittedCredential.Password)
@@ -64,15 +64,15 @@ public class SignInModel : PageModel
     }
 }
 
-public class CredentialForm
+public class SignInForm
 {
     [Required]
     [Length(5, 25)]
     public string Username { get; set; }
 
     [Required]
-    [DataType(DataType.Password)]
     [Length(5, 25)]
+    [DataType(DataType.Password)]
     public string Password { get; set; }
 
     [Required]

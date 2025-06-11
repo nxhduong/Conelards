@@ -1,6 +1,6 @@
-using Colards;
-using Colards.Helpers;
-using Colards.Hubs;
+using Conelards;
+using Conelards.Helpers;
+using Conelards.Hubs;
 using Microsoft.AspNetCore.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,7 +12,7 @@ builder.Services
     .AddAuthentication(AuthCookie.Name)
     .AddCookie(
             AuthCookie.Name,
-            (options) =>
+            options =>
             {
                 options.Cookie.Name = AuthCookie.Name;
                 options.LoginPath = "/SignIn";

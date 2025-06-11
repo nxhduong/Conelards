@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Colards.Helpers;
+namespace Conelards.Helpers;
 
 class SHA256TextHasher
 {

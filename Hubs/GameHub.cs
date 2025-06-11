@@ -2,7 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Colards.Hubs;
+namespace Conelards.Hubs;
 
 [Authorize]
 public class GameHub : Hub

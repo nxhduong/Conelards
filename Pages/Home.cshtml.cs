@@ -2,33 +2,29 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Colards.Pages;
+namespace Conelards.Pages;
 
-public class HomeModel : PageModel
+public class HomePageModel : PageModel
 {
-    private readonly ILogger<HomeModel> _logger;
+    private readonly ILogger<HomePageModel> _logger;
 
     [BindProperty]
-    RoomId Room { get; set; }
+    RoomIdForm SubmittedRoomId { get; set; }
 
-    public HomeModel(ILogger<HomeModel> logger)
+    public HomePageModel(ILogger<HomePageModel> logger)
     {
         _logger = logger;
     }
 
-    public void OnGet()
-    {
-        //
-    }
-
     public void OnPost()
     {
-        
+        RedirectToPage("/Room?id=" + SubmittedRoomId.Code);
     }
 }
 
-public class RoomId
+public class RoomIdForm
 {
     [Required]
+    [Length(9, 16)]
     public string Code { get; set; }
 }

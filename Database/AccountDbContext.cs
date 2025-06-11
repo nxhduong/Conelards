@@ -1,18 +1,18 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace Colards.Database;
+namespace Conelards.Database;
 
-public class AccountContext : DbContext
+public class AccountDbContext : DbContext
 {
-    public DbSet<AccountModel> Users { get; set; }
+    public DbSet<AccountDbModel> Users { get; set; }
 
     public string DbPath { get; }
 
-    public AccountContext()
+    public AccountDbContext()
     {
         var folder = Environment.SpecialFolder.LocalApplicationData;
         var path = Environment.GetFolderPath(folder);
-        DbPath = Path.Join(path, "ColardsDb.sqlite");
+        DbPath = Path.Join(path, "ConelardsDb.sqlite");
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)

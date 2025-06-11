@@ -1,7 +1,6 @@
-namespace Colards
+namespace Conelards;
+
+public readonly struct AuthCookie
 {
-    public readonly struct AuthCookie
-    {
-        public const string Name = "ColardsAuthCookie";
-    }
+    public const string Name = "ConelardsAuthCookie";
 }
