@@ -1,9 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Conelards.Pages;
 
+[Authorize]
 public class HomePageModel : PageModel
 {
     private readonly ILogger<HomePageModel> _logger;
@@ -18,7 +21,12 @@ public class HomePageModel : PageModel
 
     public void OnPost()
     {
-        RedirectToPage("/Room?id=" + SubmittedRoomId.Code);
+        var identity = User.Identity as ClaimsIdentity;
+
+        identity!.RemoveClaim(identity.FindFirst(claim => claim.Type == "CurrentRoomId"));
+        identity.AddClaim(new Claim("CurrentRoomId", SubmittedRoomId.Code));
+
+        RedirectToPage("/Room"); //?id=" + SubmittedRoomId.Code);
     }
 }
 

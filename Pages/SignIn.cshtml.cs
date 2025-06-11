@@ -55,7 +55,10 @@ public class SignInPageModel : PageModel
             AuthCookie.Name,
             new ClaimsPrincipal(
                 new ClaimsIdentity(
-                    [new Claim(ClaimTypes.Name, SubmittedCredential.Username)]
+                    [
+                        new Claim(ClaimTypes.Name, SubmittedCredential.Username),
+                        new Claim("CurrentRoomId", "")
+                    ]
                 )
             )
         );

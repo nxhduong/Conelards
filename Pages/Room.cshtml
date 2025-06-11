@@ -5,7 +5,12 @@
 
 @if (User.Identity?.IsAuthenticated ?? false)
 {
-    //
+    <h2>Room</h2>
+    <select id="role">
+        <option value="Player">Player</option>
+        <option value="Spectator">Spectator</option>
+    </select>
+    <button onclick="ready()" id="confirmButton">Ready</button>
 }
 else
 {
