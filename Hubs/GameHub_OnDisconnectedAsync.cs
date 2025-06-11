@@ -9,7 +9,7 @@ public partial class GameHub : Hub
     {
         var roomId = Context?.User?.FindFirstValue("CurrentRoomId");
 
-        await new Task(() => Tables[roomId!].Participants.Remove(
+        await new Task(() => Tables[roomId!].Players.Remove(
             Context?.User?.Identity?.Name!
         ));
 

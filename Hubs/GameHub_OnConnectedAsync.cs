@@ -12,8 +12,8 @@ public partial class GameHub : Hub
         if (!Tables.ContainsKey(roomId!)) Tables.Add(roomId!, new Table());
 
         await Groups.AddToGroupAsync(Context!.ConnectionId, roomId!);
-        Tables[roomId!].Participants.Add(Context?.User?.Identity?.Name!, new PlayerProperties());
-        await Clients.Group(roomId!).SendAsync("UpdateStatus", Tables[roomId!].ToString());
+        Tables[roomId!].Players.Add(Context?.User?.Identity?.Name!, new PlayerProperties());
+        await Clients.Group(roomId!).SendAsync(ActionMessage.UpdateStatus, Tables[roomId!].ToString());
 
         await base.OnConnectedAsync();
     }

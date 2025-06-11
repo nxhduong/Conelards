@@ -10,19 +10,27 @@ public partial class GameHub : Hub
         var roomId = Context?.User?.FindFirstValue("CurrentRoomId");
         var randomizer = new Random();
 
-        Tables[roomId!].Participants[Context?.User?.Identity?.Name!].IsSpectating = role == "Spectator";
+        if (role == "Player")
+        {
+            Tables[roomId!].Players.TryAdd(Context?.User?.Identity?.Name!, new PlayerProperties());
+            Tables[roomId!].Spectators.Remove(Context?.User?.Identity?.Name!);
+        }
+        else
+        {
+            Tables[roomId!].Players.Remove(Context?.User?.Identity?.Name!);
+            Tables[roomId!].Spectators.Add(Context?.User?.Identity?.Name!);
+        }
 
         //TODO: limit players to 10
         if (
             Tables[roomId!]
-                .Participants
-                .All(participant => participant.Value.IsSpectating is not null)
+                .Players
+                .All(participant => participant.Value.IsReady)
         )
         {
             foreach (
                 var player in Tables[roomId!]
-                    .Participants
-                    .Where(participant => participant.Value.IsSpectating ?? false)
+                    .Players
             )
             {
                 player.Value.Cards = Tables[roomId!].Deck.GetRange(0, 5);
@@ -30,10 +38,10 @@ public partial class GameHub : Hub
             }
 
             await Clients.Users(
-                Tables[roomId!].Participants.GetKeyAtIndex(Tables[roomId!].CurrentPlayerIndex)
-            ).SendAsync("YourTurn");
+                Tables[roomId!].Players.ElementAt(Tables[roomId!].CurrentPlayerIndex).Key
+            ).SendAsync(ActionMessage.YourTurn);
         }
 
-        await Clients.Group(roomId!).SendAsync("UpdateStatus", Tables[roomId!].ToString());
+        await Clients.Group(roomId!).SendAsync(ActionMessage.UpdateStatus, Tables[roomId!].ToString());
     }
 }
