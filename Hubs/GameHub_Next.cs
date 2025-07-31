@@ -10,32 +10,41 @@ public partial class GameHub : Hub
     {
         var roomId = Context?.User?.FindFirstValue("CurrentRoomId");
         var stack = JsonSerializer.Deserialize<IList<Card>>(cards);
+        var getANewCardFromDeck = false;
 
+        // Get 1 card from deck when player has no applicable card
         if (stack is [] || stack is null)
         {
+            getANewCardFromDeck = true;
             stack = [Tables[roomId!].Deck[0]];
+            Tables[roomId!].Deck.RemoveAt(0);
         }
 
         if (
+            // All submitted cards match number/action with discard
             stack.All(card =>
                 (card.Number is not null && card.Number == Tables[roomId!].Discard.Number)
                 || (card.Action is not null && card.Action == Tables[roomId!].Discard.Action)
             )
+            // All submitted cards match number, one card matches color with discard card
             || (stack.Any(card => card.Color == Tables[roomId!].Discard.Color)
                 && stack.All(card => card.Number == stack[0].Number))
-            || stack.All(card => new string[] {"Wild", "Shuffle", "Add4"}.Contains(card.Action))
+            // Special/action/power cards
+            || stack.All(card => ColorfulCards.Contains(card.Action))
         )
         {
             foreach (var card in stack)
             {
                 Tables[roomId!].Deck.Add(Tables[roomId!].Discard);
                 Tables[roomId!].Discard = card;
+                // Remove used cards
+                // Players can't use cards that they don't have
                 if (!Tables[roomId!].Players[Context?.User?.Identity?.Name!].Cards.Remove(card))
                 {
                     throw new Exception("Invalid card: " + cards + Tables[roomId!].Discard);
                 }
             }
-
+            // TODO: Add2,4...
             switch (stack[0].Action)
             {
                 case "Ban":
@@ -56,7 +65,7 @@ public partial class GameHub : Hub
                     {
                         var numberOfCards =
                             (int)Math.Floor((double)total.Count /
-                            Tables[roomId!].Players.Count());
+                            Tables[roomId!].Players.Count);
                         player.Value.Cards = total.GetRange(0, numberOfCards);
                         total.RemoveRange(0, numberOfCards);
                     }
@@ -64,10 +73,21 @@ public partial class GameHub : Hub
                     Tables[roomId!].Deck.AddRange(total);
                     break;
             }
+            
+            if (Tables[roomId!].Players[Context?.User?.Identity?.Name!].Cards.Count == 0)
+            {
+                // Quit playing
+                Tables[roomId!].Players.Remove(Context?.User?.Identity?.Name!);
+                Tables[roomId!].Spectators.Add(Context?.User?.Identity?.Name!);
+
+                Tables[roomId!].Players[Context?.User?.Identity?.Name!].Rank = 
+                    (byte)(Tables[roomId!].Players.Select(player => player.Value.Rank).Max() + 1);
+            }
         }
         else
         {
-            if (stack.Count == 1)
+            // Give newly-retrieved-from-deck card to player if it is not applicable
+            if (getANewCardFromDeck)
             {
                 Tables[roomId!].Players[Context?.User?.Identity?.Name!].Cards.Add(stack[0]);
             }
@@ -79,6 +99,6 @@ public partial class GameHub : Hub
 
         await Clients.Users(
             Tables[roomId!].Players.ElementAt(Tables[roomId!].CurrentPlayerIndex).Key
-        ).SendAsync("YourTurn");
+        ).SendAsync(ActionMessage.YourTurn);
     }
 }

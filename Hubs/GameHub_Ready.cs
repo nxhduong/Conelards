@@ -10,7 +10,8 @@ public partial class GameHub : Hub
         var roomId = Context?.User?.FindFirstValue("CurrentRoomId");
         var randomizer = new Random();
 
-        if (role == "Player")
+        // Modify role for the participant (max 10 players per room)
+        if (role == "Player" && Tables[roomId!].Players.Count < 10)
         {
             Tables[roomId!].Players.TryAdd(Context?.User?.Identity?.Name!, new PlayerProperties());
             Tables[roomId!].Spectators.Remove(Context?.User?.Identity?.Name!);
@@ -21,7 +22,7 @@ public partial class GameHub : Hub
             Tables[roomId!].Spectators.Add(Context?.User?.Identity?.Name!);
         }
 
-        //TODO: limit players to 10
+        // When everyone ready, allocate cards and notify first player
         if (
             Tables[roomId!]
                 .Players
