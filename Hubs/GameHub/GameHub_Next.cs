@@ -20,12 +20,14 @@ public partial class GameHub : Hub
         // Player may play newly-drawn card if it's playable
         if (playStack is [] || playStack is null)
         {
-            if (Tables[roomId!].PenaltyStack > 0)
+            if (Tables[roomId!].PenaltyStackCount > 0)
             {
-                cardsToDraw = Tables[roomId!].PenaltyStack;
-                Tables[roomId!].PenaltyStack = 0;
+                cardsToDraw = Tables[roomId!].PenaltyStackCount;
+                Tables[roomId!].PenaltyStackCount = 0;
             }
+
             cardsToDraw += 1;
+
             playStack = Tables[roomId!].Deck.GetRange(0, cardsToDraw);
             Tables[roomId!].Deck.RemoveRange(0, cardsToDraw);
         }
@@ -39,7 +41,7 @@ public partial class GameHub : Hub
             // All submitted cards match number, one card matches color with discard card
             || (playStack.Any(card => card.Color == Tables[roomId!].Discard.Color)
                 && playStack.All(card => card.Number == playStack[0].Number)
-                && Tables[roomId!].PenaltyStack == 0)
+                && Tables[roomId!].PenaltyStackCount == 0)
             // Special cards
             || playStack.All(card => (byte)(card.Action ?? 0) > 1 && card.Action == playStack[0].Action)
         )
@@ -51,26 +53,28 @@ public partial class GameHub : Hub
             switch (playStack[0].Action)
             {
                 case CardPower.Draw4:
-                    Tables[roomId!].PenaltyStack += (byte)(4 + playStack.Count);
+                    Tables[roomId!].PenaltyStackCount += (byte)(4 + playStack.Count);
                     goto case CardPower.Wild;
 
                 case CardPower.Shuffle:
-                    List<Card> total = [];
+                    List<Card> allCards = [];
                     foreach (var player in Tables[roomId!].Players)
                     {
-                        total.AddRange(player.Value.Cards);
+                        allCards.AddRange(player.Value.Cards);
                     }
+
+                    allCards = [.. allCards.OrderBy(i => Randomizer.Next())];
 
                     foreach (var player in Tables[roomId!].Players)
                     {
                         var numberOfCards =
-                            (int)Math.Floor((double)total.Count /
+                            (int)Math.Floor((double)allCards.Count /
                             Tables[roomId!].Players.Count);
-                        player.Value.Cards = total.GetRange(0, numberOfCards);
-                        total.RemoveRange(0, numberOfCards);
+                        player.Value.Cards = allCards.GetRange(0, numberOfCards);
+                        allCards.RemoveRange(0, numberOfCards);
                     }
 
-                    Tables[roomId!].Deck.AddRange(total);
+                    Tables[roomId!].Deck.AddRange(allCards);
                     goto case CardPower.Wild;
 
                 case CardPower.Wild:

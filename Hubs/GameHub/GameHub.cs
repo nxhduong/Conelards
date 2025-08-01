@@ -7,6 +7,7 @@ namespace Conelards.Hubs.GameHub;
 public partial class GameHub : Hub
 {
     readonly Dictionary<string, Table> Tables = [];
+    public new static readonly Random Randomizer;
 }
 
 class PlayerProperties

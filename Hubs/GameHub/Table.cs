@@ -7,6 +7,7 @@ namespace Conelards.Hubs.GameHub
     {
         public Dictionary<string, PlayerProperties> Players = [];
         public HashSet<string> Spectators = [];
+        List<(string poster, string msg, DateTime timePosted)> ChatHistory = [];
 
         [JsonIgnore]
         public List<Card> Deck = [
@@ -94,7 +95,7 @@ namespace Conelards.Hubs.GameHub
         ];
         //public static readonly CardPower[] ColorfulCards = [CardPower.Wild, CardPower.Shuffle, CardPower.Draw4];
         public Card Discard = default!;
-        public byte PenaltyStack = 0;
+        public byte PenaltyStackCount = 0;
 
         private byte _currentPlayerIndex = 0;
         public byte CurrentPlayerIndex
@@ -115,8 +116,8 @@ namespace Conelards.Hubs.GameHub
 
         public Table()
         {
-            var randomizer = new Random();
-            Deck = [.. Deck.OrderBy(i => randomizer.Next())];
+            // Dealing cards
+            Deck = [.. Deck.OrderBy(i => GameHub.Randomizer.Next())];
 
             byte i = 0;
             do

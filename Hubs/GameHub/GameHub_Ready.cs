@@ -8,7 +8,6 @@ public partial class GameHub : Hub
     public async Task Ready(string role)
     {
         var roomId = Context?.User?.FindFirstValue("CurrentRoomId");
-        var randomizer = new Random();
 
         // Modify role for the participant (max 10 players per room)
         if (role == "Player" && Tables[roomId!].Players.Count < 10)
