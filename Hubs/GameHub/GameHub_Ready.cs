@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Conelards.Hubs;
+namespace Conelards.Hubs.GameHub;
 
 public partial class GameHub : Hub
 {

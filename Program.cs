@@ -1,6 +1,6 @@
 using Conelards;
 using Conelards.Helpers;
-using Conelards.Hubs;
+using Conelards.Hubs.GameHub;
 using Microsoft.AspNetCore.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
