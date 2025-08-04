@@ -6,7 +6,7 @@ namespace Conelards.Hubs.GameHub
     class Table
     {
         public Dictionary<string, PlayerProperties> Players = [];
-        public HashSet<string> Spectators = [];
+        public Dictionary<string, PlayerProperties> Spectators = [];
         List<(string poster, string msg, DateTime timePosted)> ChatHistory = [];
 
         [JsonIgnore]
@@ -93,7 +93,7 @@ namespace Conelards.Hubs.GameHub
             new Card(null, null, CardPower.Shuffle),
             new Card(null, null, CardPower.Shuffle)
         ];
-        //public static readonly CardPower[] ColorfulCards = [CardPower.Wild, CardPower.Shuffle, CardPower.Draw4];
+
         public Card Discard = default!;
         public byte PenaltyStackCount = 0;
 

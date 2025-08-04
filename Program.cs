@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.SignalR;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages().AddRazorPagesOptions(
+    options => options.Conventions.AddPageRoute("Home", "/")
+);
 
 builder.Services
     .AddAuthentication(AuthCookie.Name)

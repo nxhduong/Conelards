@@ -17,8 +17,10 @@ class PlayerProperties
     public byte Rank = 0;
 }
 
-struct ActionMessage
+struct SignalMessage
 {
-    public const string UpdateStatus = "STAT";
-    public const string YourTurn = "YUTN";
+    public const string UpdateState = "UpdateState";
+    public const string YourTurn = "MyTurn";
+    public const string ExitRoom = "ExitRoom";
+    public const string GameOver = "GameOver";
 }
