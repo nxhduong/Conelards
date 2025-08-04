@@ -8,7 +8,7 @@
 
         public Card(CardColor? color = null, byte? number = null, CardPower? action = null)
         {
-            if (number is null ^ action is null) //((color is null ^ action is null) & (number is null || action is null))
+            if (number is null ^ action is null) // Simple but incomplete check; ((color is null ^ action is null) & (number is null || action is null))
             {
                 Color = color;
                 Number = number;
@@ -27,7 +27,7 @@
         Green,
         Blue,
         Yellow,
-        Black
+        BlackGray
     }
 
     public enum CardPower

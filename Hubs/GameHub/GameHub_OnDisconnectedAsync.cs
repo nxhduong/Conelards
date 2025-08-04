@@ -11,13 +11,13 @@ public partial class GameHub : Hub
 
         if (roomId is not null)
         {
-            await new Task(() => Tables[roomId].Players.Remove(
+            await new Task(() => GameState[roomId].Players.Remove(
                 Context?.User?.Identity?.Name!
             ));
 
-            if (Tables[roomId].Players.Count + Tables[roomId].Spectators.Count == 0)
+            if (GameState[roomId].Players.Count + GameState[roomId].Spectators.Count == 0)
             {
-                Tables.Remove(roomId);
+                GameState.Remove(roomId);
             }
         }
 

@@ -6,7 +6,7 @@ namespace Conelards.Hubs.GameHub;
 [Authorize]
 public partial class GameHub : Hub
 {
-    readonly Dictionary<string, Table> Tables = [];
+    readonly Dictionary<string, Table> GameState = [];
     public new static readonly Random Randomizer;
 }
 
