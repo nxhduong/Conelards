@@ -155,12 +155,12 @@ function chooseCard(uniqueId) {
     }
 
     if (myCards.hasOwnProperty(uniqueId)) {
-        document.querySelector(uniqueId).className = "btn btn-info";
+        document.querySelector(```#${uniqueId}```).className = "btn btn-info";
 
         selectedCards[uniqueId] = myCards[uniqueId];
         delete myCards[uniqueId];
     } else {
-        document.querySelector(uniqueId).className = buttonColorFromCode(myCards[uniqueId].Color);
+        document.querySelector(```#${uniqueId}```).className = buttonColorFromCode(myCards[uniqueId].Color);
 
         myCards[uniqueId] = selectedCards[uniqueId];
         delete selectedCards[uniqueId];
