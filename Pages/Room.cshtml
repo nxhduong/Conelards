@@ -5,12 +5,21 @@
 
 @if (User.Identity?.IsAuthenticated ?? false)
 {
-    <h2>Room</h2>
+    <h2>Room id: @User?.FindFirst("CurrentRoomId")</h2>
+
+    <table id="participants"></table>
+
     <select id="role">
         <option value="Player">Player</option>
         <option value="Spectator">Spectator</option>
     </select>
-    <button onclick="ready()" id="confirmButton">Ready</button>
+
+    <button onclick="sendRoleAndReadyStatus()" id="confirm-button" class="btn btn-primary">Ready</button>
+
+    <div id="discard"></div>
+    <div id="hand"></div>
+
+    <button onclick="playCards()" id="play-button" class="btn btn-success">Play selected card(s)</button>
 }
 else
 {
@@ -19,5 +28,5 @@ else
 
 @section Scripts{
     <script src="~/js/signalr/signalr.js"></script>
-    <script src="~/site.js"></script>
+    <script src="~/room.js"></script>
 }

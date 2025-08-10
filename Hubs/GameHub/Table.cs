@@ -5,8 +5,13 @@ namespace Conelards.Hubs.GameHub
 {
     class Table
     {
+        [JsonInclude]
+        public bool Start = false;
+        [JsonInclude]
         public Dictionary<string, PlayerProperties> Players = [];
+        [JsonInclude]
         public Dictionary<string, PlayerProperties> Spectators = [];
+        [JsonInclude]
         List<(string poster, string msg, DateTime timePosted)> ChatHistory = [];
 
         [JsonIgnore]
@@ -124,7 +129,9 @@ namespace Conelards.Hubs.GameHub
             new Card(null, null, CardPower.Shuffle)
         ];
 
+        [JsonInclude]
         public Card Discard = default!;
+        [JsonInclude]
         public byte PenaltyStackCount = 0;
 
         private byte _currentPlayerIndex = 0;

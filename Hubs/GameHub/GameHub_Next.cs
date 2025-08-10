@@ -19,7 +19,7 @@ public partial class GameHub : Hub
             return;
         }
 
-        var playStack = JsonSerializer.Deserialize<List<Card>>(submittedCards);
+        var playStack = JsonSerializer.Deserialize<List<Card>>(submittedCards) ?? [];
         var cardsToDraw = 0;
 
         if (GameState[roomId].Players.Count <= 1)
@@ -32,31 +32,6 @@ public partial class GameHub : Hub
             );
             GameState.Remove(roomId);
             return;
-        }
-
-        // Get 1 card from deck when player has no applicable card
-        // Player may play newly-drawn card if it's playable
-        if (playStack is [] || playStack is null)
-        {
-            if (GameState[roomId].PenaltyStackCount > 0)
-            {
-                cardsToDraw = GameState[roomId].PenaltyStackCount;
-                GameState[roomId].PenaltyStackCount = 0;
-            }
-
-            cardsToDraw += 1;
-
-            if (cardsToDraw <= GameState[roomId].Deck.Count)
-            {
-                playStack = GameState[roomId].Deck.GetRange(0, cardsToDraw);
-                GameState[roomId].Deck.RemoveRange(0, cardsToDraw);
-            }
-            else
-            {
-                // TODO
-                playStack = GameState[roomId].Deck.GetRange(0, cardsToDraw);
-                GameState[roomId].Deck.RemoveRange(0, GameState[roomId].Deck.Count);
-            }
         }
 
         if (
@@ -148,22 +123,40 @@ public partial class GameHub : Hub
                     (byte)(GameState[roomId].Players.Select(player => player.Value.Rank).Max() + 1);
             }
         }
-        else
+        else if (playStack is [])
         {
-            // Give newly-retrieved card(s) to player if it is not playable
-            if (cardsToDraw > 0)
+            // Get 1 card from deck when player has no applicable card
+            // Player may not play newly-drawn card if it's playable
+            if (GameState[roomId].PenaltyStackCount > 0)
             {
-                GameState[roomId].Players[Context?.User?.Identity?.Name!].Cards.AddRange(playStack);
+                cardsToDraw = GameState[roomId].PenaltyStackCount;
+                GameState[roomId].PenaltyStackCount = 0;
+            }
+
+            cardsToDraw += 1;
+
+            if (cardsToDraw <= GameState[roomId].Deck.Count)
+            {
+                playStack = GameState[roomId].Deck.GetRange(0, cardsToDraw);
+                GameState[roomId].Deck.RemoveRange(0, cardsToDraw);
             }
             else
             {
-                throw new Exception("Invalid card: " + submittedCards + " " + GameState[roomId].Discard);
+                // TODO
+                playStack = GameState[roomId].Deck.GetRange(0, cardsToDraw);
+                GameState[roomId].Deck.RemoveRange(0, GameState[roomId].Deck.Count);
             }
+
+            GameState[roomId].Players[Context?.User?.Identity?.Name!].Cards.AddRange(playStack);
+        }
+        else
+        {
+            throw new Exception("Invalid card: " + submittedCards + " " + GameState[roomId].Discard);
         }
 
         await Clients.Users(
             GameState[roomId].Players.ElementAt(GameState[roomId].CurrentPlayerIndex).Key
-        ).SendAsync(SignalMessage.YourTurn);
+        ).SendAsync(SignalMessage.YourTurn, GameState[roomId].Players.ElementAt(GameState[roomId].CurrentPlayerIndex).Value.Cards);
         await Clients.Group(roomId).SendAsync(SignalMessage.UpdateState, GameState[roomId].ToString());
     }
 }

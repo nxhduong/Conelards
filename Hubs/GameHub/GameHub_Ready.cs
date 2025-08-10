@@ -14,6 +14,8 @@ public partial class GameHub : Hub
             return;
         }
 
+        if (GameState[roomId].Start) return;
+
         // Modify role for the participant (max 10 players per room)
         if (role == "Player" && GameState[roomId].Players.Count < 12)
         {
@@ -51,6 +53,7 @@ public partial class GameHub : Hub
             ).SendAsync(SignalMessage.YourTurn);
         }
 
+        GameState[roomId].Start = true;
         await Clients.Group(roomId).SendAsync(SignalMessage.UpdateState, GameState[roomId].ToString());
     }
 }

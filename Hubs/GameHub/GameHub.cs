@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using System.Text.Json.Serialization;
 
 namespace Conelards.Hubs.GameHub;
 
@@ -12,8 +13,26 @@ public partial class GameHub : Hub
 
 class PlayerProperties
 {
+    [JsonInclude]
+    public byte CardCount = 0;
+    [JsonIgnore]
+    private List<Card> _cards = [];
+    [JsonIgnore]
+    public List<Card> Cards
+    {
+        get {
+            CardCount = (byte)_cards.Count;
+            return _cards; 
+        }
+        set { 
+            _cards = value;
+            CardCount = (byte)_cards.Count;
+        }
+    }
+
+    [JsonInclude]
     public bool IsReady = false;
-    public List<Card> Cards = [];
+    [JsonInclude]
     public byte Rank = 0;
 }
 
